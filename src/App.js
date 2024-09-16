@@ -1,6 +1,6 @@
 import Gameboard from "./components/Gameboard";
 import sign from "./assets/sign.png";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 function App() {
     const [playerPosition, setPlayerPosition] = useState({
@@ -8,11 +8,55 @@ function App() {
         direction: 'r'
     });
 
+    const [gameState, setGameState] = useState(true);
+
+    function handleKeyDown(event) {
+        switch (event.key) {
+            case "ArrowRight":
+                setPlayerPosition(prevPlayerPosition => ({
+                    ...prevPlayerPosition,
+                    direction: "r"
+                }));
+                return;
+            case "ArrowDown":
+                setPlayerPosition(prevPlayerPosition => ({
+                    ...prevPlayerPosition,
+                    direction: "d"
+                }));
+                return;
+            case "ArrowLeft":
+                setPlayerPosition(prevPlayerPosition => ({
+                    ...prevPlayerPosition,
+                    direction: "l"
+                }));
+                return;
+            case "ArrowUp":
+                setPlayerPosition(prevPlayerPosition => ({
+                    ...prevPlayerPosition,
+                    direction: "u"
+                }));
+                return;
+            default:
+                return;
+        }
+    }
+
+    useEffect(() => {
+        const handleKeyPress = (event) => {
+            handleKeyDown(event);
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, []);
+
     return (
-        <div id="main">
-            <Gameboard playerPosition={playerPosition} setPlayerPosition={setPlayerPosition} />
+        <div id="main" tabIndex="0" onKeyDown={handleKeyDown}>
+            <Gameboard playerPosition={playerPosition} setPlayerPosition={setPlayerPosition} gameState={gameState} setGameState={setGameState} />
             <div className="signContainer">
-                <h2 className="top-left">{playerPosition.positions.length-3}</h2>
+                <h2 className="top-left">{playerPosition.positions.length-2}</h2>
                 <img src={sign} alt={"sign"} className="signImage"/>
             </div>
         </div>

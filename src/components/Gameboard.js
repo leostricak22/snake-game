@@ -25,7 +25,7 @@ import tailEndHorizontalReverseImg from "../assets/tailEndHorizontalReverse.png"
 const GAMEBOARD_CELLS_X = 10;
 const GAMEBOARD_CELLS_Y = 15;
 const INITIAL_GAMEBOARD = Array.from({ length: GAMEBOARD_CELLS_X }, () => Array(GAMEBOARD_CELLS_Y).fill(null));
-const INTERVAL_LENGTH = 250;
+const INTERVAL_LENGTH = 100;
 
 const combinations = {
     r: { x: 0, y: 1 },
@@ -40,16 +40,14 @@ const getRandomNumberInRange = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-export default function Gameboard({playerPosition, setPlayerPosition}) {
+export default function Gameboard({playerPosition, setPlayerPosition, gameState, setGameState}) {
     const [enemyPosition, setEnemyPosition] = useState({ x: 1, y: 1 });
     const [enemyImage, setEnemyImage] = useState(undefined)
 
     const intervalRef = useRef(null);
 
     useEffect(() => {
-        console.log(playerPosition)
-
-        if(playerPosition.direction) {
+        if(gameState) {
             intervalRef.current = setInterval(() => {
                 setPlayerPosition((prevPlayerPosition) => {
                     const newBodyPositions = [...prevPlayerPosition.positions];
@@ -57,8 +55,18 @@ export default function Gameboard({playerPosition, setPlayerPosition}) {
                     const newHead = {
                         x: newBodyPositions[0].x + combinations[prevPlayerPosition.direction].x,
                         y: newBodyPositions[0].y + combinations[prevPlayerPosition.direction].y,
-                        direction: prevPlayerPosition.direction
                     };
+
+                    if (newHead.x >= GAMEBOARD_CELLS_X || newHead.x < 0 || newHead.y >= GAMEBOARD_CELLS_Y || newHead.y < 0) {
+                        setGameState(false);
+                    }
+
+                    for (let i = 0; i < playerPosition.positions.length; i++) {
+                        if (newHead.x === playerPosition.positions[i].x && newHead.y === playerPosition.positions[i].y) {
+                            setGameState(false);
+                            break;
+                        }
+                    }
 
                     newBodyPositions.unshift(newHead);
                     newBodyPositions.pop();
@@ -70,10 +78,17 @@ export default function Gameboard({playerPosition, setPlayerPosition}) {
                 });
 
             }, INTERVAL_LENGTH);
-        }
 
-        return () => clearInterval(intervalRef.current); // Cleanup on unmount
-    }, [playerPosition]);
+            return () => clearInterval(intervalRef.current);
+        }
+    }, [gameState, playerPosition.positions, setGameState, setPlayerPosition]);
+
+    useEffect(() => {
+        enemiesImages.forEach((image) => {
+            const img = new Image();
+            img.src = image;
+        });
+    }, []);
 
     useEffect(() => {
         if (playerPosition.positions[0].x === enemyPosition.x && playerPosition.positions[0].y === enemyPosition.y) {
@@ -87,6 +102,8 @@ export default function Gameboard({playerPosition, setPlayerPosition}) {
 
         const newPositions = [...playerPosition.positions, { x: newEnemyPositionX, y: newEnemyPositionY }];
 
+        setEnemyImage(enemiesImages[getRandomNumberInRange(0, enemiesImages.length - 1)]);
+
         setPlayerPosition((prevPlayerPosition) => ({
             ...prevPlayerPosition,
             positions: newPositions
@@ -96,50 +113,16 @@ export default function Gameboard({playerPosition, setPlayerPosition}) {
             x: newEnemyPositionX,
             y: newEnemyPositionY
         });
-
-        setEnemyImage(enemiesImages[getRandomNumberInRange(0, enemiesImages.length-1)])
     }
 
     useEffect(() => {
         createEnemy();
     }, []);
 
-    function handleKeyDown(event) {
-        switch (event.key) {
-            case "ArrowRight":
-                setPlayerPosition(prevPlayerPosition => ({
-                    ...prevPlayerPosition,
-                    direction: "r"
-                }));
-                return;
-            case "ArrowDown":
-                setPlayerPosition(prevPlayerPosition => ({
-                    ...prevPlayerPosition,
-                    direction: "d"
-                }));
-                return;
-            case "ArrowLeft":
-                setPlayerPosition(prevPlayerPosition => ({
-                    ...prevPlayerPosition,
-                    direction: "l"
-                }));
-                return;
-            case "ArrowUp":
-                setPlayerPosition(prevPlayerPosition => ({
-                    ...prevPlayerPosition,
-                    direction: "u"
-                }));
-                return;
-            default:
-                return;
-        }
-    }
-
     function getPosition(x,y) {
         return playerPosition.positions.findIndex((element) => JSON.stringify(element) === JSON.stringify({
             x: x,
             y: y,
-            direction: element.direction
         }));
     }
 
@@ -206,7 +189,7 @@ export default function Gameboard({playerPosition, setPlayerPosition}) {
     }
 
     return (
-        <div id="gameboard" tabIndex="0" onKeyDown={handleKeyDown}>
+        <div id="gameboard">
             {INITIAL_GAMEBOARD.map((row, x) => (
                 <div key={x} className="gameboardRow">
                     {row.map((_, y) => (
