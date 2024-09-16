@@ -1,25 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import Gameboard from "./components/Gameboard";
+import sign from "./assets/sign.png";
+import {useState} from "react";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [playerPosition, setPlayerPosition] = useState({
+        positions: [{ x: 5, y: 5 }],
+        direction: 'r'
+    });
+
+    return (
+        <div id="main">
+            <Gameboard playerPosition={playerPosition} setPlayerPosition={setPlayerPosition} />
+            <div className="signContainer">
+                <h2 className="top-left">{playerPosition.positions.length-3}</h2>
+                <img src={sign} alt={"sign"} className="signImage"/>
+            </div>
+        </div>
+    );
 }
 
 export default App;
