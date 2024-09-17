@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sofadi+One&display=swap');
 
 body {
   font-family: "Caveat", sans-serif;
@@ -93,4 +94,134 @@ h1 {
     color: white; /* Adjust text color to stand out against the image */
     padding: 5px; /* Optional: Padding for better readability */
     font-size: 3em; /* Adjust as needed */
+}
+
+.result-modal {
+    border: 4px saddlebrown solid;
+    background: #eddfb4;
+    width: 100%;
+    max-width: 1200px;
+    padding: 30px;
+    border-radius: 8px;
+    color: #000;
+    font-family: 'Arial', sans-serif;
+}
+
+.modal-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10000;
+}
+
+.resultContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 40px;
+}
+
+strong {
+    color: red;
+}
+
+.result {
+    font-size: 25px;
+}
+
+.modal-content {
+    flex: 1;
+    padding: 25px;
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 50px;
+    font-family: "Sofadi One", system-ui;
+}
+
+.name-input {
+    width: 75%;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 5px;
+    border: 2px solid saddlebrown;
+    font-size: 20px;
+    outline: none;
+}
+
+.start-btn {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 25px;
+}
+
+.start-btn:hover {
+    background-color: #218838;
+}
+
+.leaderboard-container {
+    flex: 0.5;
+    padding: 20px;
+    background: saddlebrown;
+    border-radius: 8px;
+    max-height: 300px;
+    overflow: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.leaderboard-container h3 {
+    margin-top: 0;
+    text-align: center;
+    color: #fff;
+    font-size: 30px;
+}
+
+.leaderboard-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.leaderboard-list li {
+    padding: 8px;
+    background-color: #eddfb4;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.leaderboard-container::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.leaderboard-container::-webkit-scrollbar-track {
+    background: #4e342e; /* Background of the track (container of the scrollbar) */
+    border-radius: 5px;
+}
+
+.leaderboard-container::-webkit-scrollbar-thumb {
+    background-color: #d7ccc8; /* Color of the scrollbar handle */
+    border-radius: 10px; /* Rounded edges for the scrollbar handle */
+    border: 2px solid #4e342e; /* Gives a padding-like effect around the thumb */
+}
+
+.leaderboard-container::-webkit-scrollbar-thumb:hover {
+    background-color: #c5b1a1; /* Lighter color when hovered */
 }
