@@ -15,6 +15,7 @@ h1 {
 
 #gameboard {
     border: 1px solid black;
+    height: 100%;
 }
 
 .gameboardRow {
@@ -23,15 +24,14 @@ h1 {
 }
 
 .gameboardCell {
-    width: 10vh;
-    height: 10vh;
+    width: calc(100vh / var(--cols)); /* Use custom properties for responsive scaling */
+    height: calc(100vh / var(--cols));
     background-color: #97e897;
 }
 
 .gameboardCellOdd {
     background-color: #7ecf7e;
 }
-
 
 .enemy {
     background-color: #ff7f7f;

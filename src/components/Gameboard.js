@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import playerImg from "../assets/player.png";
 import enemy1Img from "../assets/enemy1.png";
 import enemy2Img from "../assets/enemy2.png";
@@ -22,8 +22,8 @@ import tailEndVerticalReverseImg from "../assets/tailEndVerticalReverse.png"
 import tailEndHorizontalImg from "../assets/tailEndHorizontal.png"
 import tailEndHorizontalReverseImg from "../assets/tailEndHorizontalReverse.png"
 
-const GAMEBOARD_CELLS_X = 10;
-const GAMEBOARD_CELLS_Y = 15;
+const GAMEBOARD_CELLS_X = 20;
+const GAMEBOARD_CELLS_Y = 30;
 const INITIAL_GAMEBOARD = Array.from({ length: GAMEBOARD_CELLS_X }, () => Array(GAMEBOARD_CELLS_Y).fill(null));
 const INTERVAL_LENGTH = 100;
 
@@ -47,7 +47,12 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
     const intervalRef = useRef(null);
 
     useEffect(() => {
-        if(gameState) {
+        document.documentElement.style.setProperty('--cols', GAMEBOARD_CELLS_X);
+        document.documentElement.style.setProperty('--rows', GAMEBOARD_CELLS_Y);
+    }, []);
+
+    useEffect(() => {
+        if (gameState) {
             intervalRef.current = setInterval(() => {
                 setPlayerPosition((prevPlayerPosition) => {
                     const newBodyPositions = [...prevPlayerPosition.positions];
@@ -57,31 +62,31 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
                         y: newBodyPositions[0].y + combinations[prevPlayerPosition.direction].y,
                     };
 
-                    if (newHead.x >= GAMEBOARD_CELLS_X || newHead.x < 0 || newHead.y >= GAMEBOARD_CELLS_Y || newHead.y < 0) {
-                        setGameState(false);
-                    }
-
-                    for (let i = 0; i < playerPosition.positions.length; i++) {
-                        if (newHead.x === playerPosition.positions[i].x && newHead.y === playerPosition.positions[i].y) {
-                            setGameState(false);
-                            break;
-                        }
-                    }
-
-                    newBodyPositions.unshift(newHead);
-                    newBodyPositions.pop();
+                    const updatedPositions = [newHead, ...newBodyPositions.slice(0, -1)];
 
                     return {
                         ...prevPlayerPosition,
-                        positions: newBodyPositions
+                        positions: updatedPositions
                     };
                 });
-
             }, INTERVAL_LENGTH);
 
             return () => clearInterval(intervalRef.current);
         }
-    }, [gameState, playerPosition.positions, setGameState, setPlayerPosition]);
+    }, [gameState, setGameState, setPlayerPosition]);
+
+    useEffect(() => {
+        if (playerPosition.positions[0].x >= GAMEBOARD_CELLS_X || playerPosition.positions[0].x < 0 || playerPosition.positions[0].y >= GAMEBOARD_CELLS_Y || playerPosition.positions[0].y < 0) {
+            setGameState(false);
+        }
+
+        for (let i = 1; i < playerPosition.positions.length; i++) {
+            if (playerPosition.positions[0].x === playerPosition.positions[i].x && playerPosition.positions[0].y === playerPosition.positions[i].y) {
+                setGameState(false);
+                break;
+            }
+        }
+    }, [playerPosition.positions, setGameState]);
 
     useEffect(() => {
         enemiesImages.forEach((image) => {
@@ -90,17 +95,11 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
         });
     }, []);
 
-    useEffect(() => {
-        if (playerPosition.positions[0].x === enemyPosition.x && playerPosition.positions[0].y === enemyPosition.y) {
-            createEnemy();
-        }
-    }, [enemyPosition, playerPosition]);
-
-    function createEnemy() {
+    const createEnemy = useCallback(() => {
         let newEnemyPositionX = getRandomNumberInRange(0, GAMEBOARD_CELLS_X - 1);
         let newEnemyPositionY = getRandomNumberInRange(0, GAMEBOARD_CELLS_Y - 1);
 
-        const newPositions = [...playerPosition.positions, { x: newEnemyPositionX, y: newEnemyPositionY }];
+        const newPositions = [...playerPosition.positions, {x: newEnemyPositionX, y: newEnemyPositionY}];
 
         setEnemyImage(enemiesImages[getRandomNumberInRange(0, enemiesImages.length - 1)]);
 
@@ -113,11 +112,17 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
             x: newEnemyPositionX,
             y: newEnemyPositionY
         });
-    }
+    }, [playerPosition.positions, setPlayerPosition]);
 
     useEffect(() => {
         createEnemy();
     }, []);
+
+    useEffect(() => {
+        if (playerPosition.positions[0].x === enemyPosition.x && playerPosition.positions[0].y === enemyPosition.y) {
+            createEnemy();
+        }
+    }, [createEnemy, enemyPosition, playerPosition]);
 
     function getPosition(x,y) {
         return playerPosition.positions.findIndex((element) => JSON.stringify(element) === JSON.stringify({
