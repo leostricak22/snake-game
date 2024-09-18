@@ -35,6 +35,37 @@ const combinations = {
 
 const enemiesImages = [enemy1Img, enemy2Img, enemy3Img, enemy4Img]
 
+const imageList = [
+    playerImg,
+    enemy1Img,
+    enemy2Img,
+    enemy3Img,
+    enemy4Img,
+    horizontalTailImg,
+    horizontalTailReverseImg,
+    verticalTailImg,
+    verticalTailReverseImg,
+    topRightTailImg,
+    topRightTailReverseImg,
+    topLeftTailImg,
+    topLeftTailReverseImg,
+    bottomLeftTailImg,
+    bottomLeftTailReverseImg,
+    bottomRightTailImg,
+    bottomRightTailReverseImg,
+    tailEndVerticalImg,
+    tailEndVerticalReverseImg,
+    tailEndHorizontalImg,
+    tailEndHorizontalReverseImg
+];
+
+const preloadImages = (images) => {
+    images.forEach((imageSrc) => {
+        const img = new Image();
+        img.src = imageSrc;
+    });
+};
+
 const getRandomNumberInRange = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -44,6 +75,7 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
     const [enemyImage, setEnemyImage] = useState(undefined)
 
     const intervalRef = useRef(null);
+    const imageCache = useRef({});
 
     const [gameboardWidth, setGameboardWidth] = useState(GAMEBOARD_CELLS_X);
     const [gameboardHeight, setGameboardHeight] = useState(GAMEBOARD_CELLS_Y);
@@ -106,12 +138,13 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
                 break;
             }
         }
-    }, [playerPosition.positions, setGameState]);
+    }, [gameboardHeight, gameboardWidth, playerPosition.positions, setGameState]);
 
     useEffect(() => {
-        enemiesImages.forEach((image) => {
+        imageList.forEach((imgSrc) => {
             const img = new Image();
-            img.src = image;
+            img.src = imgSrc;
+            imageCache.current[imgSrc] = img;
         });
     }, []);
 
@@ -132,7 +165,7 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
             x: newEnemyPositionX,
             y: newEnemyPositionY
         });
-    }, [playerPosition.positions, setPlayerPosition]);
+    }, [gameboardHeight, gameboardWidth, playerPosition.positions, setPlayerPosition]);
 
     useEffect(() => {
         createEnemy();

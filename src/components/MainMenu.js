@@ -28,7 +28,6 @@ const MainMenu = forwardRef(function MainMenu({startGame, playerName, setPlayerN
                     <div className="modal-container">
                         <div className="modal-content">
                             <h2>Zmijica</h2>
-                            <h3>Osvojili ste: <strong>{score}</strong> bodova</h3>
                             <p>Upišite ime da bi mogli započeti igru:</p>
                             <div className="nameForm">
                                 <input

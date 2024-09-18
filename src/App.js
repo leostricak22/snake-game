@@ -1,5 +1,4 @@
 import Gameboard from "./components/Gameboard";
-import sign from "./assets/sign.png";
 import {useEffect, useRef, useState} from "react";
 import MainMenu from "./components/MainMenu";
 
@@ -161,7 +160,7 @@ function App() {
             />
             <div className="signContainer">
                 <h2 className="top-left">{playerPosition.positions.length-1}</h2>
-                <img src={sign} alt={"sign"} className="signImage"/>
+                <div className="signImage"/>
             </div>
         </div>
     );
