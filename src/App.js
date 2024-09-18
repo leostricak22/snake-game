@@ -4,9 +4,12 @@ import {useEffect, useRef, useState} from "react";
 import MainMenu from "./components/MainMenu";
 
 const INITIAL_PLAYER_POSITION = {
-    positions: [{ x: 5, y: 5 }],
-    direction: 'r'
+    positions: [{ x: 5, y: 5, direction: 'r' }],
+    nextDirection: 'r'
 }
+
+let startX=0;
+let startY=0;
 
 function App() {
     const [playerPosition, setPlayerPosition] = useState(INITIAL_PLAYER_POSITION);
@@ -17,14 +20,14 @@ function App() {
 
     function handleKeyDown(event) {
         setPlayerPosition(prevPlayerPosition => {
-            const currentDirection = prevPlayerPosition.direction;
+            const currentDirection = prevPlayerPosition.positions[0].direction;
 
             switch (event.key) {
                 case "ArrowRight":
                     if (currentDirection !== 'l' && currentDirection !== 'r') {
                         return {
                             ...prevPlayerPosition,
-                            direction: "r"
+                            nextDirection: "r"
                         };
                     }
                     break;
@@ -32,7 +35,7 @@ function App() {
                     if (currentDirection !== 'u' && currentDirection !== 'd') {
                         return {
                             ...prevPlayerPosition,
-                            direction: "d"
+                            nextDirection: "d"
                         };
                     }
                     break;
@@ -40,7 +43,7 @@ function App() {
                     if (currentDirection !== 'r' && currentDirection !== 'l') {
                         return {
                             ...prevPlayerPosition,
-                            direction: "l"
+                            nextDirection: "l"
                         };
                     }
                     break;
@@ -48,7 +51,7 @@ function App() {
                     if (currentDirection !== 'd' && currentDirection !== 'u') {
                         return {
                             ...prevPlayerPosition,
-                            direction: "u"
+                            nextDirection: "u"
                         };
                     }
                     break;
@@ -59,16 +62,78 @@ function App() {
         });
     }
 
+    let handleTouchEnd;
+    handleTouchEnd = event => {
+        if (!gameState)
+            return;
+
+        const endX = event.changedTouches[0].clientX;
+        const endY = event.changedTouches[0].clientY;
+
+        const diffX = endX - startX;
+        const diffY = endY - startY;
+
+        setPlayerPosition(prevPlayerPosition => {
+            const currentDirection = prevPlayerPosition.positions[0].direction;
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 0 && currentDirection !== 'l'  && currentDirection !== 'r') {
+                    return {
+                        ...prevPlayerPosition,
+                        nextDirection: "r"
+                    };
+                } else if (diffX < 0 && currentDirection !== 'r'  && currentDirection !== 'l') {
+                    return {
+                        ...prevPlayerPosition,
+                        nextDirection: "l"
+                    };
+                }
+            } else {
+                if (diffY > 0 && currentDirection !== 'u'  && currentDirection !== 'd') {
+                    return {
+                        ...prevPlayerPosition,
+                        nextDirection: "d"
+                    };
+                } else if (diffY < 0 && currentDirection !== 'd'  && currentDirection !== 'u') {
+                    return {
+                        ...prevPlayerPosition,
+                        nextDirection: "u"
+                    };
+                }
+            }
+            return prevPlayerPosition
+        });
+    };
+
+    let handleTouchStart;
+    handleTouchStart = event => {
+        console.log(gameState)
+        if (!gameState)
+            return;
+
+        startX = event.touches[0].clientX;
+        startY = event.touches[0].clientY;
+    };
+
     useEffect(() => {
         const handleKeyPress = (event) => {
             handleKeyDown(event);
         };
+        const handleTouchStartPress = (event) => {
+            handleTouchStart(event);
+        };
+        const handleTouchEndPress = (event) => {
+            handleTouchEnd(event);
+        };
 
         window.addEventListener('keydown', handleKeyPress);
+        window.addEventListener('touchstart', handleTouchStartPress);
+        window.addEventListener('touchend', handleTouchEndPress);
         return () => {
             window.removeEventListener('keydown', handleKeyPress);
+            window.removeEventListener('touchstart', handleTouchStartPress);
+            window.removeEventListener('touchend', handleTouchEndPress);
         };
-    }, []);
+    }, [handleTouchEnd, handleTouchStart]);
 
     useEffect(() => {
         if(!gameState)

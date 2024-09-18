@@ -24,7 +24,6 @@ import tailEndHorizontalReverseImg from "../assets/tailEndHorizontalReverse.png"
 
 const GAMEBOARD_CELLS_X = 20;
 const GAMEBOARD_CELLS_Y = 30;
-const INITIAL_GAMEBOARD = Array.from({ length: GAMEBOARD_CELLS_X }, () => Array(GAMEBOARD_CELLS_Y).fill(null));
 const INTERVAL_LENGTH = 100;
 
 const combinations = {
@@ -46,10 +45,30 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
 
     const intervalRef = useRef(null);
 
+    const [gameboardWidth, setGameboardWidth] = useState(GAMEBOARD_CELLS_X);
+    const [gameboardHeight, setGameboardHeight] = useState(GAMEBOARD_CELLS_Y);
+    const [initialGameboard, setInitialGameboard] = useState(Array.from({ length: GAMEBOARD_CELLS_X }, () => Array(GAMEBOARD_CELLS_Y).fill(null)));
+
     useEffect(() => {
-        document.documentElement.style.setProperty('--cols', GAMEBOARD_CELLS_X);
-        document.documentElement.style.setProperty('--rows', GAMEBOARD_CELLS_Y);
-    }, []);
+        const updateGridSize = () => {
+            if (window.outerWidth <= 1000) {
+                setGameboardWidth(GAMEBOARD_CELLS_Y);
+                setGameboardHeight(GAMEBOARD_CELLS_X);
+            } else {
+                setGameboardWidth(GAMEBOARD_CELLS_X);
+                setGameboardHeight(GAMEBOARD_CELLS_Y);
+            }
+
+            setInitialGameboard(Array.from({ length: gameboardWidth }, () => Array(gameboardHeight).fill(null)));
+            document.documentElement.style.setProperty('--cols', gameboardWidth);
+            document.documentElement.style.setProperty('--rows', gameboardHeight);
+        };
+
+        updateGridSize();
+        window.addEventListener('resize', updateGridSize);
+
+        return () => window.removeEventListener('resize', updateGridSize);
+    }, [gameboardWidth, gameboardHeight]);
 
     useEffect(() => {
         if (gameState) {
@@ -58,8 +77,9 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
                     const newBodyPositions = [...prevPlayerPosition.positions];
 
                     const newHead = {
-                        x: newBodyPositions[0].x + combinations[prevPlayerPosition.direction].x,
-                        y: newBodyPositions[0].y + combinations[prevPlayerPosition.direction].y,
+                        x: newBodyPositions[0].x + combinations[prevPlayerPosition.nextDirection].x,
+                        y: newBodyPositions[0].y + combinations[prevPlayerPosition.nextDirection].y,
+                        direction: prevPlayerPosition.nextDirection
                     };
 
                     const updatedPositions = [newHead, ...newBodyPositions.slice(0, -1)];
@@ -76,7 +96,7 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
     }, [gameState, setGameState, setPlayerPosition]);
 
     useEffect(() => {
-        if (playerPosition.positions[0].x >= GAMEBOARD_CELLS_X || playerPosition.positions[0].x < 0 || playerPosition.positions[0].y >= GAMEBOARD_CELLS_Y || playerPosition.positions[0].y < 0) {
+        if (playerPosition.positions[0].x >= gameboardWidth || playerPosition.positions[0].x < 0 || playerPosition.positions[0].y >= gameboardHeight || playerPosition.positions[0].y < 0) {
             setGameState(false);
         }
 
@@ -96,8 +116,8 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
     }, []);
 
     const createEnemy = useCallback(() => {
-        let newEnemyPositionX = getRandomNumberInRange(0, GAMEBOARD_CELLS_X - 1);
-        let newEnemyPositionY = getRandomNumberInRange(0, GAMEBOARD_CELLS_Y - 1);
+        let newEnemyPositionX = getRandomNumberInRange(0, gameboardWidth - 1);
+        let newEnemyPositionY = getRandomNumberInRange(0, gameboardHeight - 1);
 
         const newPositions = [...playerPosition.positions, {x: newEnemyPositionX, y: newEnemyPositionY}];
 
@@ -125,10 +145,9 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
     }, [createEnemy, enemyPosition, playerPosition]);
 
     function getPosition(x,y) {
-        return playerPosition.positions.findIndex((element) => JSON.stringify(element) === JSON.stringify({
-            x: x,
-            y: y,
-        }));
+        return playerPosition.positions.findIndex((element) =>
+            element.x === x && element.y === y
+        );
     }
 
     function findTailDirection(x,y) {
@@ -195,7 +214,7 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
 
     return (
         <div id="gameboard">
-            {INITIAL_GAMEBOARD.map((row, x) => (
+            {initialGameboard.map((row, x) => (
                 <div key={x} className="gameboardRow">
                     {row.map((_, y) => (
                         <div key={y} className={"gameboardCell " + (((x % 2 === 0 && y % 2 === 0) || (x % 2 !== 0 && y % 2 !== 0)) ? "gameboardCellOdd" : "")}>
@@ -203,7 +222,7 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
                                 <img
                                     src={playerImg}
                                     alt="Player"
-                                    className={`cellImage player player-${playerPosition.direction || 'r'}`} // Use direction class
+                                    className={`cellImage player player-${playerPosition.nextDirection || 'r'}`}
                                 />
                             ) : playerPosition.positions.some(pos => pos.x === x && pos.y === y) ? (
                                 <img className={`cellImage tail`} src={

@@ -30,15 +30,17 @@ const MainMenu = forwardRef(function MainMenu({startGame, playerName, setPlayerN
                             <h2>Zmijica</h2>
                             <h3>Osvojili ste: <strong>{score}</strong> bodova</h3>
                             <p>Upišite ime da bi mogli započeti igru:</p>
-                            <input
-                                type="text"
-                                placeholder="Upišite ime"
-                                className="name-input"
-                                required
-                                value={playerName}
-                                onChange={handleNameChange}
-                            />
-                            <button className="start-btn" onClick={startGame}>Započni</button>
+                            <div className="nameForm">
+                                <input
+                                    type="text"
+                                    placeholder="Upišite ime"
+                                    className="name-input"
+                                    required
+                                    value={playerName}
+                                    onChange={handleNameChange}
+                                />
+                                <button className="start-btn" onClick={startGame}>Započni</button>
+                            </div>
                         </div>
 
                         <div className="leaderboard-container">

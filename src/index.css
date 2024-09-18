@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Sofadi+One&display=swap');
 
 body {
-  font-family: "Caveat", sans-serif;
+    font-family: "Caveat", sans-serif;
     margin: 0;
     overflow: hidden;
     background-color: #97e897;
@@ -25,8 +25,8 @@ h1 {
 }
 
 .gameboardCell {
-    width: calc(100vh / var(--cols)); /* Use custom properties for responsive scaling */
-    height: calc(100vh / var(--cols));
+    width: calc(100svh / var(--cols)); /* Use custom properties for responsive scaling */
+    height: calc(100svh / var(--cols));
     background-color: #97e897;
 }
 
@@ -50,10 +50,6 @@ h1 {
     transform: rotate(90deg);
 }
 
-.gameboardRow {
-    display: flex;
-}
-
 .cellImage {
     width: 100%;
     height: 100%;
@@ -67,7 +63,8 @@ h1 {
 #main {
     display: flex;
     flex-direction: row;
-    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
 }
 
 
@@ -99,7 +96,6 @@ h1 {
 .result-modal {
     border: 4px saddlebrown solid;
     background: #eddfb4;
-    width: 100%;
     max-width: 1200px;
     padding: 30px;
     border-radius: 8px;
@@ -156,7 +152,8 @@ h2 {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 25px;
+    font-size: 20px;
+    width: 150px;
 }
 
 .start-btn:hover {
@@ -198,8 +195,8 @@ h2 {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100svw;
+    height: 100svh;
     background-color: rgba(0, 0, 0, 0.75);
     display: flex;
     justify-content: center;
@@ -224,4 +221,32 @@ h2 {
 
 .leaderboard-container::-webkit-scrollbar-thumb:hover {
     background-color: #c5b1a1; /* Lighter color when hovered */
+}
+
+.nameForm {
+    display: flex;
+    flex-direction: column;
+}
+
+@media screen and (max-width: 1000px) {
+    #gameboard {
+        width: 100svw; /* Use viewport width */
+        max-height: 80svh;
+    }
+    .gameboardCell {
+        width: calc(100svw / var(--rows));
+        height: calc(100svw / var(--rows));
+    }
+
+    .gameboardRow {
+        display: flex;
+    }
+
+    #main {
+        flex-direction: column; /* Stack elements vertically */
+    }
+
+    .modal-container {
+        width: 90vw;
+    }
 }
