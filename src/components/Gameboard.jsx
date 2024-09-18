@@ -59,13 +59,6 @@ const imageList = [
     tailEndHorizontalReverseImg
 ];
 
-const preloadImages = (images) => {
-    images.forEach((imageSrc) => {
-        const img = new Image();
-        img.src = imageSrc;
-    });
-};
-
 const getRandomNumberInRange = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };

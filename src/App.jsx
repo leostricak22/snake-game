@@ -1,9 +1,10 @@
 import Gameboard from "./components/Gameboard";
 import {useEffect, useRef, useState} from "react";
 import MainMenu from "./components/MainMenu";
+import Credit from "./components/Credit";
 
 const INITIAL_PLAYER_POSITION = {
-    positions: [{ x: 5, y: 5, direction: 'r' }],
+    positions: [{ x: 5, y: 5, direction: 'r' }, { x: 5, y: 4, direction: 'r' }],
     nextDirection: 'r'
 }
 
@@ -162,6 +163,7 @@ function App() {
                 <h2 className="top-left">{playerPosition.positions.length-1}</h2>
                 <div className="signImage"/>
             </div>
+            <Credit />
         </div>
     );
 }
