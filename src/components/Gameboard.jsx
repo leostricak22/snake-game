@@ -161,8 +161,9 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
     }, [gameboardHeight, gameboardWidth, playerPosition.positions, setPlayerPosition]);
 
     useEffect(() => {
-        createEnemy();
-    }, []);
+        if(!enemyImage)
+            createEnemy();
+    }, [enemyImage, createEnemy]);
 
     useEffect(() => {
         if (playerPosition.positions[0].x === enemyPosition.x && playerPosition.positions[0].y === enemyPosition.y) {

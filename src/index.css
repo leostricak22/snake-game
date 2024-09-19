@@ -78,9 +78,10 @@ h1 {
 
 
 .signImage {
-    display: block;
     width: 350px;
-    height: 100vh;
+    height: 900px;
+
+    margin: auto;
 
     background-image: url("assets/sign.png");
     background-size: contain;
@@ -96,7 +97,7 @@ h1 {
 
 .top-left {
     position: absolute;
-    top: 73px;
+    top: 212px;
     left: 10px;
     text-align: center;
     width: 128px;

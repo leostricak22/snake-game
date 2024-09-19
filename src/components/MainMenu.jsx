@@ -1,8 +1,9 @@
-import {forwardRef, useImperativeHandle, useRef} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useRef} from "react";
 import { createPortal } from 'react-dom'
 
 const MainMenu = forwardRef(function MainMenu({startGame, playerName, setPlayerName, score}, ref) {
     const dialog = useRef();
+    const button = useRef(null);
 
     useImperativeHandle(ref, () => ({
         open() {
@@ -19,6 +20,12 @@ const MainMenu = forwardRef(function MainMenu({startGame, playerName, setPlayerN
     const handleNameChange = (e) => {
         setPlayerName(e.target.value);
     };
+
+    useEffect(() => {
+        if (button.current) {
+            button.current.focus();
+        }
+    }, []);
 
     return createPortal (
         (
@@ -38,7 +45,7 @@ const MainMenu = forwardRef(function MainMenu({startGame, playerName, setPlayerN
                                     value={playerName}
                                     onChange={handleNameChange}
                                 />
-                                <button className="start-btn" onClick={startGame}>Započni</button>
+                                <button ref={button} className="start-btn" onClick={startGame}>Započni</button>
                             </div>
                         </div>
 
