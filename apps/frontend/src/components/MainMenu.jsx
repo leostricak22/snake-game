@@ -5,6 +5,7 @@ import { FaArrowAltCircleLeft } from "react-icons/fa";
 import { FaArrowAltCircleRight } from "react-icons/fa";
 import { FaArrowAltCircleUp } from "react-icons/fa";
 import { FaArrowAltCircleDown } from "react-icons/fa";
+import Leaderboard from "./Leaderboard";
 
 const MainMenu = forwardRef(function MainMenu({hasGameStarted, startGame, playerName, setPlayerName, score}, ref) {
     const dialog = useRef();
@@ -77,16 +78,7 @@ const MainMenu = forwardRef(function MainMenu({hasGameStarted, startGame, player
                                         </div>
                                     </div>
 
-                                    <div className="leaderboard-container">
-                                    <h3>Ljestvica</h3>
-                                    <ul className="leaderboard-list">
-                                    <li>1. Player1 - 100</li>
-                                    <li>2. Player2 - 95</li>
-                                    <li>3. Player3 - 90</li>
-                                    <li>4. Player4 - 85</li>
-                                    <li>5. Player5 - 80</li>
-                                    </ul>
-                                    </div>
+                                    <Leaderboard />
                                 </>
                             )
                         }
