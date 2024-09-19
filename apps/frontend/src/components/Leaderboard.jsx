@@ -25,7 +25,13 @@ export default function Leaderboard() {
                 scores.map((player, index) => (
                     <li key={player.id}>
                         <div>
-                            {index + 1}. {player.name}
+                            {index === 0
+                                ? "🥇"
+                            : index === 1
+                                ? "🥈"
+                            : index === 2
+                                ? "🥉"
+                            : `${index + 1}.`} {player.name}
                         </div>
                         <div>
                             {player.maxScore}
