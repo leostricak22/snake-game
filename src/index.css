@@ -116,6 +116,7 @@ h1 {
     border-radius: 8px;
     color: #000;
     font-family: 'Arial', sans-serif;
+    outline: none;
 }
 
 .modal-container {
@@ -123,16 +124,18 @@ h1 {
     justify-content: space-between;
     align-items: center;
     z-index: 9999;
+    outline: none;
 }
 
 .resultContainer {
     display: flex;
     justify-content: space-between;
     margin-right: 40px;
+    outline: none;
 }
 
 strong {
-    color: red;
+    color: darkgreen;
 }
 
 .result {
@@ -263,6 +266,26 @@ h2 {
     text-shadow: 2px 1px 15px #000;
 }
 
+.score-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+}
+
+.score {
+    font-size: 30px;
+    color: #000;
+}
+
+.instruction {
+    font-size: 15px;
+    margin: 0;
+    padding: 0;
+    color: #393838;
+}
+
 @media screen and (max-width: 1000px) {
     #gameboard {
         width: 100svw;
@@ -385,4 +408,9 @@ h2 {
 
         text-shadow: 2px 1px 15px #000;
     }
+}
+
+.arrowIcons {
+    position: relative;
+    top: 2px;
 }

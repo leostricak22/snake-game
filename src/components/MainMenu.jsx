@@ -1,9 +1,16 @@
-import {forwardRef, useEffect, useImperativeHandle, useRef} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import { createPortal } from 'react-dom'
 
-const MainMenu = forwardRef(function MainMenu({startGame, playerName, setPlayerName, score}, ref) {
+import { FaArrowAltCircleLeft } from "react-icons/fa";
+import { FaArrowAltCircleRight } from "react-icons/fa";
+import { FaArrowAltCircleUp } from "react-icons/fa";
+import { FaArrowAltCircleDown } from "react-icons/fa";
+
+const MainMenu = forwardRef(function MainMenu({hasGameStarted, startGame, playerName, setPlayerName, score}, ref) {
     const dialog = useRef();
     const button = useRef(null);
+    const [pressed, setPressed] = useState(false);
+    const [keysPressed, setKeysPressed] = useState(false);
 
     useImperativeHandle(ref, () => ({
         open() {
@@ -12,8 +19,20 @@ const MainMenu = forwardRef(function MainMenu({startGame, playerName, setPlayerN
     }));
 
     const handleKeyDown = (e) => {
-        if (e.key === "Escape") {
+        if(e.key === "Escape")
             e.preventDefault();
+
+        if(!pressed) {
+            if(e.key !== 'ArrowUp' && e.key !== 'ArrowDown' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')
+                setPressed(true)
+            else
+                setKeysPressed(true)
+
+            return;
+        }
+
+        if (e.key === "Enter") {
+            startGame();
         }
     };
 
@@ -33,38 +52,50 @@ const MainMenu = forwardRef(function MainMenu({startGame, playerName, setPlayerN
                 <div className="modal-overlay"></div>
                 <dialog className="result-modal" ref={dialog} onKeyDown={handleKeyDown}>
                     <div className="modal-container">
-                        <div className="modal-content">
-                            <h2>Zmijica</h2>
-                            <p>Upišite ime da bi mogli započeti igru:</p>
-                            <div className="nameForm">
-                                <input
-                                    type="text"
-                                    placeholder="Upišite ime"
-                                    className="name-input"
-                                    required
-                                    value={playerName}
-                                    onChange={handleNameChange}
-                                />
-                                <button ref={button} className="start-btn" onClick={startGame}>Započni</button>
-                            </div>
-                        </div>
+                        {
+                            (!pressed && hasGameStarted) ? (
+                                <div className="score-container">
+                                    <p className="score">Rezultat: <strong>{score}</strong></p>
+                                    <p className="instruction">Pritisnite bilo koju tipku za nastavak.</p>
+                                    {keysPressed && <p className="instruction">Osim <span className="arrowIcons"><FaArrowAltCircleLeft /> <FaArrowAltCircleRight/> <FaArrowAltCircleUp /> <FaArrowAltCircleDown /></span>.</p>}
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="modal-content">
+                                        <h2>Zmijica</h2>
+                                        <p>Upišite ime da bi mogli započeti igru:</p>
+                                        <div className="nameForm">
+                                            <input
+                                                type="text"
+                                                placeholder="Upišite ime"
+                                                className="name-input"
+                                                required
+                                                value={playerName}
+                                                onChange={handleNameChange}
+                                            />
+                                            <button ref={button} className="start-btn" onClick={startGame}>Započni</button>
+                                        </div>
+                                    </div>
 
-                        <div className="leaderboard-container">
-                            <h3>Ljestvica</h3>
-                            <ul className="leaderboard-list">
-                                <li>1. Player1 - 100</li>
-                                <li>2. Player2 - 95</li>
-                                <li>3. Player3 - 90</li>
-                                <li>4. Player4 - 85</li>
-                                <li>5. Player5 - 80</li>
-                            </ul>
-                        </div>
+                                    <div className="leaderboard-container">
+                                    <h3>Ljestvica</h3>
+                                    <ul className="leaderboard-list">
+                                    <li>1. Player1 - 100</li>
+                                    <li>2. Player2 - 95</li>
+                                    <li>3. Player3 - 90</li>
+                                    <li>4. Player4 - 85</li>
+                                    <li>5. Player5 - 80</li>
+                                    </ul>
+                                    </div>
+                                </>
+                            )
+                        }
                     </div>
-            </dialog>
-        </>
-    ),
-    document.getElementById("modal")
-    )
-})
+                </dialog>
+            </>
+                    ),
+                    document.getElementById("modal")
+                    )
+                    })
 
 export default MainMenu;

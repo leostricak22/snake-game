@@ -22,8 +22,8 @@ import tailEndVerticalReverseImg from "../assets/tailEndVerticalReverse.png"
 import tailEndHorizontalImg from "../assets/tailEndHorizontal.png"
 import tailEndHorizontalReverseImg from "../assets/tailEndHorizontalReverse.png"
 
-const GAMEBOARD_CELLS_X = 20;
-const GAMEBOARD_CELLS_Y = 30;
+const GAMEBOARD_CELLS_X = 10;
+const GAMEBOARD_CELLS_Y = 15;
 const INTERVAL_LENGTH = 100;
 
 const combinations = {

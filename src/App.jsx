@@ -15,6 +15,7 @@ function App() {
     const [playerPosition, setPlayerPosition] = useState(INITIAL_PLAYER_POSITION);
 
     const [gameState, setGameState] = useState(false);
+    const [hasGameStarted, setHasGameStarted] = useState(false);
     const [playerName, setPlayerName] = useState("")
     const dialog = useRef();
 
@@ -146,13 +147,15 @@ function App() {
             return false
         }
 
+        setHasGameStarted(true);
         setPlayerPosition(INITIAL_PLAYER_POSITION)
         setGameState(true)
     }
 
     return (
         <div id="main" tabIndex="0" onKeyDown={handleKeyDown}>
-            {!gameState && <MainMenu ref={dialog} startGame={startGame} setPlayerName={setPlayerName} playerName={playerName} score={playerPosition.positions.length-1}/>}
+            {!gameState &&
+                <MainMenu ref={dialog} startGame={startGame} setPlayerName={setPlayerName} playerName={playerName} score={playerPosition.positions.length - INITIAL_PLAYER_POSITION.positions.length} hasGameStarted={hasGameStarted} />}
             <Gameboard
                 playerPosition={playerPosition}
                 setPlayerPosition={setPlayerPosition}
@@ -160,7 +163,7 @@ function App() {
                 setGameState={setGameState}
             />
             <div className="signContainer">
-                <h2 className="top-left">{playerPosition.positions.length-1}</h2>
+                <h2 className="top-left">{playerPosition.positions.length-INITIAL_PLAYER_POSITION.positions.length}</h2>
                 <div className="signImage"/>
             </div>
             <Credit />
