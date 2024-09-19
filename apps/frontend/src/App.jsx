@@ -16,7 +16,7 @@ function App() {
 
     const [gameState, setGameState] = useState(false);
     const [hasGameStarted, setHasGameStarted] = useState(false);
-    const [playerName, setPlayerName] = useState("")
+    const [playerName, setPlayerName] = useState(localStorage.getItem("playerName") || "")
     const dialog = useRef();
 
     function handleKeyDown(event) {

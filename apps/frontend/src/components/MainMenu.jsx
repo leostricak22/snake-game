@@ -39,6 +39,7 @@ const MainMenu = forwardRef(function MainMenu({hasGameStarted, startGame, player
 
     const handleNameChange = (e) => {
         setPlayerName(e.target.value);
+        localStorage.setItem("playerName", e.target.value);
     };
 
     useEffect(() => {
@@ -46,6 +47,20 @@ const MainMenu = forwardRef(function MainMenu({hasGameStarted, startGame, player
             button.current.focus();
         }
     }, []);
+
+    useEffect(() => {
+        const handleTouch = () => {
+            if (!pressed) {
+                setPressed(true);
+            }
+        };
+
+        window.addEventListener("touchstart", handleTouch);
+
+        return () => {
+            window.removeEventListener("touchstart", handleTouch);
+        };
+    }, [pressed]);
 
     return createPortal (
         (

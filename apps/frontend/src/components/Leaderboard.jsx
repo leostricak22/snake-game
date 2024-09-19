@@ -19,7 +19,10 @@ export default function Leaderboard() {
         <div className="leaderboard-container">
             <h3>Ljestvica</h3>
             <ul className="leaderboard-list">
-                {scores.map((player, index) => (
+                {scores.length === 0 ?
+                    <p className="loading">Učitavanje...</p>
+                    :
+                scores.map((player, index) => (
                     <li key={player.id}>
                         <div>
                             {index + 1}. {player.name}
