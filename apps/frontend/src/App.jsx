@@ -1,5 +1,5 @@
 import Gameboard from "./components/Gameboard";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import MainMenu from "./components/MainMenu";
 import Credit from "./components/Credit";
 
@@ -18,6 +18,29 @@ function App() {
     const [hasGameStarted, setHasGameStarted] = useState(false);
     const [playerName, setPlayerName] = useState(localStorage.getItem("playerName") || "")
     const dialog = useRef();
+
+    const saveScore = useCallback(() => {
+        if (hasGameStarted) {
+            fetch('http://192.168.253.191:5000/scores', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: playerName,
+                    maxScore: playerPosition.positions.length - INITIAL_PLAYER_POSITION.positions.length,
+                }),
+            }).catch((error) => {
+                console.error("Error posting scores:", error);
+            });
+        }
+    }, [hasGameStarted, playerName, playerPosition.positions]);
+
+
+    useEffect(() => {
+        if(gameState === false && hasGameStarted)
+            saveScore();
+    }, [gameState, hasGameStarted, saveScore]);
 
     function handleKeyDown(event) {
         setPlayerPosition(prevPlayerPosition => {
@@ -107,7 +130,6 @@ function App() {
 
     let handleTouchStart;
     handleTouchStart = event => {
-        console.log(gameState)
         if (!gameState)
             return;
 
