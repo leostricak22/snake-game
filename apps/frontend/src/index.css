@@ -287,6 +287,21 @@ h2 {
     color: #393838;
 }
 
+
+#ad {
+    position: fixed;
+    top: 0;
+    z-index: 10000;
+    left: 0;
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    font-size: 1em;
+    font-family: "JetBrains Mono", monospace;
+
+}
+
 @media screen and (max-width: 1000px) {
     #gameboard {
         width: 100svw;
@@ -420,6 +435,19 @@ h2 {
         border-top-left-radius: 5px;
 
         text-shadow: 2px 1px 15px #000;
+    }
+
+    #ad {
+        position: fixed;
+        top: 0;
+        z-index: 10000;
+        left: 0;
+        width: 100%;
+        background-color: #000;
+        color: #fff;
+        padding: 2px;
+        text-align: center;
+        font-size: 0.7em;
     }
 }
 
