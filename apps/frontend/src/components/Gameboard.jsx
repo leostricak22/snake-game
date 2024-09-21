@@ -25,6 +25,10 @@ import tailEndHorizontalReverseImg from "../assets/tailEndHorizontalReverse.png"
 const GAMEBOARD_CELLS_X = 10;
 const GAMEBOARD_CELLS_Y = 15;
 const INTERVAL_LENGTH = 100;
+const INITIAL_PLAYER_POSITION = {
+    positions: [{ x: 1, y: 2, direction: 'r' }, { x: 1, y: 1, direction: 'r' }],
+    nextDirection: 'r'
+}
 
 const combinations = {
     r: { x: 0, y: 1 },
@@ -74,14 +78,20 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
     const [gameboardHeight, setGameboardHeight] = useState(GAMEBOARD_CELLS_Y);
     const [initialGameboard, setInitialGameboard] = useState(Array.from({ length: GAMEBOARD_CELLS_X }, () => Array(GAMEBOARD_CELLS_Y).fill(null)));
 
+
     useEffect(() => {
         const updateGridSize = () => {
             if (window.outerWidth <= 1000) {
                 setGameboardWidth(GAMEBOARD_CELLS_Y);
                 setGameboardHeight(GAMEBOARD_CELLS_X);
+                setPlayerPosition((prevPlayerPosition) => {
+                    prevPlayerPosition.nextDirection = 'd';
+                    return prevPlayerPosition;
+                })
             } else {
                 setGameboardWidth(GAMEBOARD_CELLS_X);
                 setGameboardHeight(GAMEBOARD_CELLS_Y);
+                setPlayerPosition(INITIAL_PLAYER_POSITION)
             }
 
             setInitialGameboard(Array.from({ length: gameboardWidth }, () => Array(gameboardHeight).fill(null)));
@@ -93,7 +103,7 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
         window.addEventListener('resize', updateGridSize);
 
         return () => window.removeEventListener('resize', updateGridSize);
-    }, [gameboardWidth, gameboardHeight]);
+    }, [gameboardWidth, gameboardHeight, setPlayerPosition]);
 
     useEffect(() => {
         if (gameState) {
@@ -141,9 +151,24 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
         });
     }, []);
 
+    function calculateGameboardDistance(x1, y1, x2, y2) {
+        return Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
+    }
+
     const createEnemy = useCallback(() => {
-        let newEnemyPositionX = getRandomNumberInRange(0, gameboardWidth - 1);
-        let newEnemyPositionY = getRandomNumberInRange(0, gameboardHeight - 1);
+        let playerHead = playerPosition.positions[0];
+
+
+        let newEnemyPositionX, newEnemyPositionY;
+
+        do {
+            newEnemyPositionX = getRandomNumberInRange(0, gameboardWidth - 1);
+            newEnemyPositionY = getRandomNumberInRange(0, gameboardHeight - 1);
+        } while (
+            // eslint-disable-next-line no-loop-func
+            playerPosition.positions.some(pos => pos.x === newEnemyPositionX && pos.y === newEnemyPositionY) ||
+            calculateGameboardDistance(playerHead.x, playerHead.y, newEnemyPositionX, newEnemyPositionY) <= 2
+        );
 
         const newPositions = [...playerPosition.positions, {x: newEnemyPositionX, y: newEnemyPositionY}];
 
@@ -164,6 +189,11 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
         if(!enemyImage)
             createEnemy();
     }, [enemyImage, createEnemy]);
+
+    useEffect(() => {
+        if(gameState === true && enemyPosition.x === playerPosition.positions[0].x && enemyPosition.y === playerPosition.positions[0].y)
+            createEnemy()
+    }, [createEnemy, gameState]);
 
     useEffect(() => {
         if (playerPosition.positions[0].x === enemyPosition.x && playerPosition.positions[0].y === enemyPosition.y) {

@@ -2,9 +2,10 @@ import Gameboard from "./components/Gameboard";
 import {useCallback, useEffect, useRef, useState} from "react";
 import MainMenu from "./components/MainMenu";
 import Credit from "./components/Credit";
+import Ad from "./components/Ad";
 
 const INITIAL_PLAYER_POSITION = {
-    positions: [{ x: 5, y: 5, direction: 'r' }, { x: 5, y: 4, direction: 'r' }],
+    positions: [{ x: 1, y: 1, direction: 'r' }, { x: 1, y: 0, direction: 'r' }],
     nextDirection: 'r'
 }
 
@@ -176,8 +177,11 @@ function App() {
 
     return (
         <div id="main" tabIndex="0" onKeyDown={handleKeyDown}>
-            {!gameState &&
-                <MainMenu ref={dialog} startGame={startGame} setPlayerName={setPlayerName} playerName={playerName} score={playerPosition.positions.length - INITIAL_PLAYER_POSITION.positions.length} hasGameStarted={hasGameStarted} />}
+            {!gameState && <>
+                <Ad />
+                <MainMenu ref={dialog} startGame={startGame} setPlayerName={setPlayerName} playerName={playerName} score={playerPosition.positions.length - INITIAL_PLAYER_POSITION.positions.length} hasGameStarted={hasGameStarted} />
+            </>
+            }
             <Gameboard
                 playerPosition={playerPosition}
                 setPlayerPosition={setPlayerPosition}
