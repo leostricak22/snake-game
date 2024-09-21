@@ -5,7 +5,7 @@ const getScores = async (req, res) => {
         const scores = await Score.findAll();
         res.status(200).json(scores);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to retrieve scores.' });
+        res.status(500).json({ error });
     }
 };
 

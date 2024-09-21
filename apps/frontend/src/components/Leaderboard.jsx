@@ -4,7 +4,7 @@ export default function Leaderboard() {
     const [scores, setScores] = useState([]);
 
     useEffect(() => {
-        fetch('http://192.168.253.191:5000/scores')
+        fetch('https://api.zmijica.barbuddy.net/scores')
             .then(response => response.json())
             .then(data => {
                 const sortedScores = data.sort((a, b) => b.maxScore - a.maxScore);

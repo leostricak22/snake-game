@@ -21,7 +21,7 @@ function App() {
 
     const saveScore = useCallback(() => {
         if (hasGameStarted) {
-            fetch('http://192.168.253.191:5000/scores', {
+            fetch('https://api.zmijica.barbuddy.net/scores', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
