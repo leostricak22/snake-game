@@ -26,7 +26,7 @@ const GAMEBOARD_CELLS_X = 10;
 const GAMEBOARD_CELLS_Y = 15;
 const INTERVAL_LENGTH = 100;
 const INITIAL_PLAYER_POSITION = {
-    positions: [{ x: 1, y: 2, direction: 'r' }, { x: 1, y: 1, direction: 'r' }],
+    positions: [{ x: 1, y: 1, direction: 'r' }, { x: 1, y: 0, direction: 'r' }],
     nextDirection: 'r'
 }
 
@@ -68,7 +68,7 @@ const getRandomNumberInRange = (min, max) => {
 };
 
 export default function Gameboard({playerPosition, setPlayerPosition, gameState, setGameState}) {
-    const [enemyPosition, setEnemyPosition] = useState({ x: 1, y: 1 });
+    const [enemyPosition, setEnemyPosition] = useState({ x: 2, y: 2 });
     const [enemyImage, setEnemyImage] = useState(undefined)
 
     const intervalRef = useRef(null);
@@ -76,6 +76,7 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
 
     const [gameboardWidth, setGameboardWidth] = useState(GAMEBOARD_CELLS_X);
     const [gameboardHeight, setGameboardHeight] = useState(GAMEBOARD_CELLS_Y);
+    const [createEnemyTrigger, setCreateEnemyTrigger] = useState(false);
     const [initialGameboard, setInitialGameboard] = useState(Array.from({ length: GAMEBOARD_CELLS_X }, () => Array(GAMEBOARD_CELLS_Y).fill(null)));
 
 
@@ -170,20 +171,22 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
             calculateGameboardDistance(playerHead.x, playerHead.y, newEnemyPositionX, newEnemyPositionY) <= 2
         );
 
-        const newPositions = [...playerPosition.positions, {x: newEnemyPositionX, y: newEnemyPositionY}];
-
         setEnemyImage(enemiesImages[getRandomNumberInRange(0, enemiesImages.length - 1)]);
 
-        setPlayerPosition((prevPlayerPosition) => ({
-            ...prevPlayerPosition,
-            positions: newPositions
-        }));
+        if(playerPosition.positions[0].x === enemyPosition.x && playerPosition.positions[0].y === enemyPosition.y) {
+            const newPositions = [...playerPosition.positions, {x: newEnemyPositionX, y: newEnemyPositionY}];
+
+            setPlayerPosition((prevPlayerPosition) => ({
+                ...prevPlayerPosition,
+                positions: newPositions
+            }));
+        }
 
         setEnemyPosition({
             x: newEnemyPositionX,
             y: newEnemyPositionY
         });
-    }, [gameboardHeight, gameboardWidth, playerPosition.positions, setPlayerPosition]);
+    }, [enemyPosition.x, enemyPosition.y, gameboardHeight, gameboardWidth, playerPosition.positions, setPlayerPosition]);
 
     useEffect(() => {
         if(!enemyImage)
@@ -191,9 +194,16 @@ export default function Gameboard({playerPosition, setPlayerPosition, gameState,
     }, [enemyImage, createEnemy]);
 
     useEffect(() => {
-        if(gameState === true && enemyPosition.x === playerPosition.positions[0].x && enemyPosition.y === playerPosition.positions[0].y)
-            createEnemy()
-    }, [createEnemy, gameState]);
+        if(gameState === true)
+            setCreateEnemyTrigger(true);
+    }, [gameState]);
+
+    useEffect(() => {
+        if(createEnemyTrigger) {
+            createEnemy();
+            setCreateEnemyTrigger(false);
+        }
+    }, [createEnemy, createEnemyTrigger]);
 
     useEffect(() => {
         if (playerPosition.positions[0].x === enemyPosition.x && playerPosition.positions[0].y === enemyPosition.y) {
