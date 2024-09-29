@@ -8,9 +8,10 @@ const INITIAL_PLAYER_POSITION = {
     positions: [{ x: 1, y: 1, direction: 'r' }, { x: 1, y: 0, direction: 'r' }],
     nextDirection: 'r'
 }
-
 let startX=0;
+
 let startY=0;
+
 
 function App() {
     const [playerPosition, setPlayerPosition] = useState(INITIAL_PLAYER_POSITION);
@@ -21,8 +22,8 @@ function App() {
     const dialog = useRef();
 
     const saveScore = useCallback(() => {
-        if (hasGameStarted) {
-            fetch('https://api.zmijica.barbuddy.net/scores', {
+        if (hasGameStarted && gameState === false) {
+            fetch(process.env.REACT_APP_API_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -35,7 +36,8 @@ function App() {
                 console.error("Error posting scores:", error);
             });
         }
-    }, [hasGameStarted, playerName, playerPosition.positions]);
+    // eslint-disable-next-line
+    }, [gameState, hasGameStarted, playerPosition.positions.length]);
 
 
     useEffect(() => {
